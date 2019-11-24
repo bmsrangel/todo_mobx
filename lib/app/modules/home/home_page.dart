@@ -18,13 +18,16 @@ class _HomePageState extends State<HomePage> {
 
   _showDialog([TodoModel model]) {
     model = model ?? TodoModel();
+    String titleCache = model.title;
+
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (_) {
         return AlertDialog(
-          title: Text("Novo"),
-          content: TextField(
+          title: Text(model != null ? "Editar" : "Novo"),
+          content: TextFormField(
+            initialValue: model.title,
             maxLines: 5,
             onChanged: (value) {
               model.title = value;
@@ -34,13 +37,18 @@ class _HomePageState extends State<HomePage> {
             FlatButton(
               child: Text("Cancelar"),
               onPressed: () {
+                model.title = titleCache;
                 Navigator.pop(context);
               },
             ),
             FlatButton(
               child: Text("Salvar"),
               onPressed: () {
-                controller.add(model);
+                if (model.id != null) {
+                  controller.update(model);
+                } else {
+                  controller.add(model);
+                }
                 Navigator.pop(context);
               },
             ),
@@ -56,17 +64,52 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         centerTitle: true,
+        actions: <Widget>[
+          FlatButton(
+            child: Text(
+              "Remover tudo",
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: controller.cleanAll,
+          ),
+        ],
       ),
       body: Observer(
         builder: (_) {
-          return ListView.builder(
-            itemCount: controller.list.length,
-            itemBuilder: (_, int index) {
-              TodoModel model = controller.list[index];
-              return ItemWidget(
-                model: model,
-              );
-            },
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      "Total de itens na lista: ${controller.itemsTotal}",
+                      style: Theme.of(context).textTheme.caption,
+                    ),
+                    Text(
+                      "Total de itens marcados: ${controller.itemsChecked}",
+                      style: Theme.of(context).textTheme.caption,
+                    )
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: controller.list.length,
+                  itemBuilder: (_, int index) {
+                    TodoModel model = controller.list[index];
+                    return ItemWidget(
+                      model: model,
+                      onPressed: () {
+                        _showDialog(model);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),

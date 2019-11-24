@@ -41,6 +41,11 @@ class LocalStorageService extends Disposable {
     await box.put(model.id, model.toJson());
   }
 
+  clear() async {
+    final box = await completer.future;
+    await box.clear();
+  }
+
   @override
   void dispose() async {
     final box = await completer.future;

@@ -16,6 +16,8 @@ class TodoModel extends _TodoModel with _$TodoModel {
 
 abstract class _TodoModel with Store {
   int id;
+
+  @observable
   String title;
 
   @observable

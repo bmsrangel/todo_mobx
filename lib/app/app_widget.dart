@@ -7,8 +7,10 @@ class AppWidget extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Slidy',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+          primarySwatch: Colors.deepPurple,
+          textTheme: TextTheme(
+            caption: TextStyle(color: Colors.grey[700], fontSize: 14),
+          )),
       home: HomeModule(),
     );
   }
